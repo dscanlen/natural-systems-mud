@@ -111,7 +111,7 @@ def update_positions(current_time, star_system):
 
 
 
-def planet_viewer(star_system ,current_time, positions, planet_name, lat, lon):
+def planet_viewer(star_system ,current_time, positions, planet_name, lat, lon, skybox):
     """
     This function calculates and displays the visible celestial bodies in the sky, their altitude,
     azimuth, and angular size as seen by an observer on a specified planet in the solar system, at
@@ -182,4 +182,34 @@ def planet_viewer(star_system ,current_time, positions, planet_name, lat, lon):
             moon_phase = calculate_moon_phase(positions[body_info['name']], positions[planet_name], positions["Sun"])
             print(f"{body_info['name']} is in the {moon_phase} phase")
 
-    return visible_bodies_np
+    visible_bodies_np = np.array(visible_bodies, dtype=[('name', 'U20'), ('altitude', float), ('azimuth', float), ('angular_size', float)])
+    visible_bodies_np.sort(order='altitude')
+    visible_bodies_np = visible_bodies_np[::-1]
+
+    visible_constellations = []
+
+    # Loop through constellations in the skybox and calculate their altitude and azimuth
+    for constellation_name, constellation in skybox.constellations.items():
+        dx, dy, dz = constellation.coordinates
+        distance_to_center = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+
+        distance = math.sqrt(observer_radius ** 2 + distance_to_center ** 2 - 2 * observer_radius * distance_to_center * math.cos(observer_lat_rad))
+
+        declination = math.asin(dz / distance)
+        right_ascension = math.atan2(dy, dx)
+
+        hour_angle = lst - right_ascension
+
+        sin_latitude_tilted = math.sin(observer_lat_rad) * math.cos(axial_tilt_rad) - math.cos(observer_lat_rad) * math.sin(axial_tilt_rad) * math.cos(hour_angle)
+        cos_latitude_tilted = math.cos(observer_lat_rad) * math.cos(axial_tilt_rad) + math.sin(observer_lat_rad) * math.sin(axial_tilt_rad) * math.cos(hour_angle)
+        altitude = math.asin(sin_latitude_tilted * math.sin(declination) + cos_latitude_tilted * math.cos(declination) * math.cos(hour_angle))
+        azimuth = math.atan2(-math.sin(hour_angle), cos_latitude_tilted * math.sin(declination) - sin_latitude_tilted * math.cos(declination) * math.cos(hour_angle))
+
+        if -math.pi / 2 <= altitude <= math.pi / 2:
+            visible_constellations.append((constellation_name, altitude, azimuth))
+
+    visible_constellations_np = np.array(visible_constellations, dtype=[('name', 'U20'), ('altitude', float), ('azimuth', float)])
+    visible_constellations_np.sort(order='altitude')
+    visible_constellations_np = visible_constellations_np[::-1]
+
+    return visible_bodies_np, visible_constellations_np

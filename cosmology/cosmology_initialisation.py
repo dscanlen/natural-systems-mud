@@ -23,27 +23,6 @@ import random
 SECONDS_PER_DAY = 86400
 SECONDS_PER_YEAR = 31536000
 
-class Star:
-    """
-    A class to represent a star.
-
-    Attributes:
-    name (str): the name of the star.
-    coordinates (tuple): a tuple representing the star's right ascension, declination, and distance.
-    """
-
-    def __init__(self, name, coordinates):
-        """
-        Constructs all the necessary attributes for the Star object.
-
-        Parameters:
-        name (str): the name of the star.
-        coordinates (tuple): a tuple representing the star's right ascension, declination,
-            and distance.
-        """
-        self.name = name
-        self.coordinates = coordinates
-
 
 class Constellation:
     """
@@ -54,7 +33,7 @@ class Constellation:
     stars (list): a list of Star objects that make up the constellation.
     """
 
-    def __init__(self, name, stars):
+    def __init__(self, name, description, coordinates):
         """
         Constructs all the necessary attributes for the Constellation object.
 
@@ -63,7 +42,8 @@ class Constellation:
         stars (list): a list of Star objects that make up the constellation.
         """
         self.name = name
-        self.stars = stars
+        self.description = description
+        self.coordinates = coordinates
 
 
 class Skybox:
@@ -76,7 +56,7 @@ class Skybox:
     constellations (dict): a dictionary mapping coordinates to Constellation objects.
     """
 
-    def __init__(self, radius, stars=None, constellations=None):
+    def __init__(self, radius, constellations=None):
         """
         Constructs all the necessary attributes for the Skybox object.
 
@@ -87,7 +67,6 @@ class Skybox:
                 Default is an empty dict.
         """
         self.radius = radius
-        self.stars = stars if stars is not None else {}
         self.constellations = constellations if constellations is not None else {}
 
 
@@ -120,11 +99,13 @@ class CelestialBody:
         plane in degrees.
     """
 
-    def __init__(self, name, body_type, orbit_radius, orbit_period, rotation_period, inclination, parent, radius, axial_tilt):
+    def __init__(self, name, description, body_type, apogee, perigee, orbit_period, rotation_period, inclination, parent, radius, axial_tilt):
         self.name = name
+        self.description = description
         self.body_type = body_type
-        self.orbit_radius = orbit_radius
         self.orbit_period = orbit_period
+        self.perigee = perigee
+        self.apogee = apogee
         self.rotation_period = rotation_period
         self.inclination = inclination
         self.parent = parent
@@ -145,26 +126,27 @@ def initialize_star_system():
         the star system.
     """
 
-    sun = CelestialBody("Sun", "star", 0, 0, 0, 0, None, 696340, 0)
+    sun = CelestialBody("Sun", "Big burning ball", "star", 0, 0, 0, 0, 0, None, 696340, 0)
 
     planets = [
-        CelestialBody("Mercury", "planet", 0.39, 87.97 * SECONDS_PER_DAY, 58.646 * SECONDS_PER_DAY, 7.00, sun, 2440, 0.034),
-        CelestialBody("Venus", "planet", 0.72, 224.70 * SECONDS_PER_DAY, -243.018 * SECONDS_PER_DAY, 3.39, sun, 6052, 2.64),
-        CelestialBody("Earth", "planet", 1.00, 365.26 * SECONDS_PER_DAY, 1 * SECONDS_PER_DAY, 0, sun, 6371, 23.44),
-        CelestialBody("Jupiter", "planet", 5.20, 11.86 * SECONDS_PER_YEAR, 0.41354 * SECONDS_PER_DAY, 1.31, sun, 69911, 3.13),
-        CelestialBody("Saturn", "planet", 9.58, 29.46 * SECONDS_PER_YEAR, 0.44401 * SECONDS_PER_DAY, 2.49, sun, 58232, 26.73),
+        CelestialBody("Mercury", "Mercury description", "planet", 0.47, 0.31, 87.97 * SECONDS_PER_DAY, 58.646 * SECONDS_PER_DAY, 7.00, sun, 2440, 0.034),
+        CelestialBody("Venus", "Venus description", "planet", 0.72, 0.71, 224.70 * SECONDS_PER_DAY, -243.018 * SECONDS_PER_DAY, 3.39, sun, 6052, 2.64),
+        CelestialBody("Earth", "Earth description", "planet", 1.02, 0.98, 365.26 * SECONDS_PER_DAY, 1 * SECONDS_PER_DAY, 0, sun, 6371, 23.44),
+        CelestialBody("Jupiter", "Jupiter description", "planet", 5.46, 4.95, 11.86 * SECONDS_PER_YEAR, 0.41354 * SECONDS_PER_DAY, 1.31, sun, 69911, 3.13),
+        CelestialBody("Saturn", "Saturn description", "planet", 10.12, 9.04, 29.46 * SECONDS_PER_YEAR, 0.44401 * SECONDS_PER_DAY, 2.49, sun, 58232, 26.73),
     ]
 
     moons = [
-        CelestialBody("Moon1", "moon", 0.00257, 27 * SECONDS_PER_DAY, 27 * SECONDS_PER_DAY, 5.14, planets[2], 1737, 0),
-        CelestialBody("Moon2", "moon", 0.005, 50 * SECONDS_PER_DAY, 50 * SECONDS_PER_DAY, 7.37, planets[2], 1000, 0),
+        CelestialBody("Moon", "Moon description", "moon", 0.00257, 0.00256, 27 * SECONDS_PER_DAY, 27 * SECONDS_PER_DAY, 5.14, planets[2], 1737, 1.54),
+        CelestialBody("Phobos", "Phobos description", "moon", 0.0000066, 0.0000062, 0.31891 * SECONDS_PER_DAY, 0.31891 * SECONDS_PER_DAY, 1.08, planets[3], 11.2667, 0),
+        CelestialBody("Deimos", "Deimos description", "moon", 0.0000234, 0.0000222, 1.26244 * SECONDS_PER_DAY, 1.26244 * SECONDS_PER_DAY, 1.79, planets[3], 6.2, 0),
+        CelestialBody("Europa", "Europa description", "moon", 0.0045, 0.0045, 3.551 * SECONDS_PER_DAY, 3.551 * SECONDS_PER_DAY, 0.47, planets[2], 1560.8, 0.1),
     ]
 
     comets = [
-        CelestialBody("Comet1", "comet", 35, 1 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 6, 0),
-        CelestialBody("Comet2", "comet", 50, 1 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 10, 0),
-        CelestialBody("Comet3", "comet", 80, 1 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 25, 0),
-        CelestialBody("Comet4", "comet", 100, 1 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 92, 0),
+        CelestialBody("Comet1", "Red comet description", "comet", 0.9, 0.6, 1 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 6, 0),
+        CelestialBody("Comet2", "blue comet description", "comet", 5.5, 3.7, 5 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 10, 0),
+        CelestialBody("Comet3", "green comet description", "comet", 0.8, 0.4, 0.5 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 25, 0),
     ]
 
     star_system = [sun] + planets + moons + comets
@@ -192,17 +174,10 @@ def initialize_skybox(radius):
         dictionaries.
     """
 
-    # Initialize some stars with names and coordinates
-    stars = {
-        "Alpha Centauri": Star("Alpha Centauri", (14.63, -60.83, 4.367)),
-        "Sirius": Star("Sirius", (6.75, -16.716, 8.611)),
-        "Betelgeuse": Star("Betelgeuse", (5.919, 7.407, 643)),
-    }
-
     # Initialize a constellation with the name and list of stars
     constellations = {
-        "Canis Major": Constellation("Canis Major", [stars["Sirius"]]),
-        "Orion": Constellation("Orion", [stars["Betelgeuse"]]),
+        "Canis Major": Constellation("Canis Major", "A bright star named Sirius", (6.75, -16.716, 8.611)),
+        "Orion": Constellation("Orion", "A bright start named Betelgeuse", (5.919, 7.407, 643)),
     }
 
-    return Skybox(radius, stars, constellations)
+    return Skybox(radius, constellations)

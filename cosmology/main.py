@@ -13,8 +13,8 @@ representations, and save the images to a specified directory.
 import os
 import time
 # from evennia import gametime
-from cosmology_initialisation import initialize_star_system #, initialize_skybox
-# from position_calculations import compute_max_apogee
+from cosmology_initialisation import initialize_star_system, initialize_skybox
+from position_calculations import compute_max_apogee
 from viewer_visualisation import update_positions, planet_viewer
 from graphical_visualisation import plot_visible_bodies
 
@@ -24,8 +24,8 @@ def main():
     """
     # initialise everything:
     star_system = initialize_star_system()
-    # max_apogee = compute_max_apogee(star_system.values())
-    # sky_box = initialize_skybox(max_apogee + 10)
+    max_apogee = compute_max_apogee(star_system)
+    sky_box = initialize_skybox(max_apogee + 10)
 
     # get the time:
     # current_time = gametime.time()
@@ -39,8 +39,8 @@ def main():
     # test run
     for i in range(1, 400):
         positions = update_positions(current_time, star_system)
-        visible_bodies = planet_viewer(star_system, current_time, positions, 'Earth', 0, 0)
-        plot_visible_bodies(visible_bodies, str(filename).zfill(3))  # add leading zeros to filename
+        visible_bodies, visible_constellations = planet_viewer(star_system, current_time, positions, 'Earth', 0, 0, sky_box)
+        plot_visible_bodies(visible_bodies, visible_constellations, str(filename).zfill(3))  # add leading zeros to filename
         filename += 1
         current_time += 1800
 

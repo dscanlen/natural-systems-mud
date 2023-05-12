@@ -65,32 +65,58 @@ def calculate_position(body, time):
     else:
         parent_x, parent_y, parent_z = 0, 0, 0
 
+    # Calculate the semi-major axis and eccentricity of the body's orbit
+    semi_major_axis = (body.perigee + body.apogee) / 2
+    if body.apogee != 0 and body.perigee != 0:
+        eccentricity = (body.apogee - body.perigee) / (body.perigee + body.apogee)
+    else:
+        return np.array([0, 0, 0])
+
     # Calculate the angle of the body in its orbit at the given time
     if body.orbit_period != 0:
         angle = 2 * np.pi * (time % body.orbit_period) / body.orbit_period
     else:
         angle = 0
 
+    # Calculate the distance of the body from its parent at the given time
+    true_anomaly_dist = semi_major_axis * (1 - eccentricity**2) / (1 + eccentricity * np.cos(angle))
+
     # Calculate the x, y, z position of the body relative to its parent
-    x = parent_x + body.orbit_radius * np.cos(angle)
-    y = parent_y + body.orbit_radius * np.sin(angle)
-    z = parent_z + body.orbit_radius * np.sin(np.radians(body.inclination))
+    x = parent_x + true_anomaly_dist * np.cos(angle)
+    y = parent_y + true_anomaly_dist * np.sin(angle)
+    z = parent_z + true_anomaly_dist * np.sin(np.radians(body.inclination))
 
     return np.array([x, y, z])
 
 
 def compute_max_apogee(celestial_bodies):
     """
-    Compute the maximum apogee of all celestial bodies.
+    Calculate the maximum apogee across all celestial bodies in the system.
 
     Parameters:
     ----------
-    celestial_bodies (dict): a dictionary of celestial bodies.
+    celestial_bodies : dict
+        A dictionary mapping names of celestial bodies to CelestialBody objects.
 
     Returns:
     -------
     float
-        The maximum apogee.
+        The maximum apogee value.
     """
-    max_apogee = max(km_to_au(body.orbit_radius) for body in celestial_bodies.values())
-    return max_apogee
+    return max(body.apogee for body in celestial_bodies.values())
+
+# def compute_max_apogee(celestial_bodies):
+#     """
+#     Compute the maximum apogee of all celestial bodies.
+
+#     Parameters:
+#     ----------
+#     celestial_bodies (dict): a dictionary of celestial bodies.
+
+#     Returns:
+#     -------
+#     float
+#         The maximum apogee.
+#     """
+#     max_apogee = max(km_to_au(body.orbit_radius) for body in celestial_bodies.values())
+#     return max_apogee

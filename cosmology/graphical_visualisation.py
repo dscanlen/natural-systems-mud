@@ -16,7 +16,7 @@ celestial bodies and save the plot as an image file.
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_visible_bodies(visible_bodies, file_name):
+def plot_visible_bodies(visible_bodies, visible_constellations, file_name):
     """
     Plot the visible celestial objects in the context of the viewer and save the plot as an
     image file.
@@ -54,6 +54,13 @@ def plot_visible_bodies(visible_bodies, file_name):
         size = ((body['angular_size'] / max_angular_size) * 5000) / 10
         ax.scatter(np.radians(angle), radius, s=size)
         ax.text(np.radians(angle), radius, body['name'], fontsize=10)
+
+    for body in visible_constellations:
+        radius = 90 - np.degrees(body['altitude'])
+        angle = np.degrees(body['azimuth'])
+        ax.scatter(np.radians(angle), radius, s=100)
+        ax.text(np.radians(angle), radius, body['name'], fontsize=10)
+
 
     # Save the plot
     plt.savefig(f"{file_name}.png")
