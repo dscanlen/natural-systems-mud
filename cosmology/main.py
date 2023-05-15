@@ -39,7 +39,7 @@ def main():
     # test run
     for i in range(1, 400):
         positions = update_positions(current_time, star_system)
-        visible_bodies, visible_constellations = planet_viewer(star_system, current_time, positions, 'Earth', 0, 0, sky_box)
+        visible_bodies, visible_constellations = planet_viewer(star_system, current_time, positions, 'Earth', 40, -74, sky_box)
         plot_visible_bodies(visible_bodies, visible_constellations, str(filename).zfill(3))  # add leading zeros to filename
         filename += 1
         current_time += 1800

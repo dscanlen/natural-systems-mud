@@ -32,6 +32,7 @@ the `cosmology_initialisation.py` script.
 import math
 import numpy as np
 from position_calculations import calculate_position, km_to_au
+from cosmology_initialisation import Skybox
 
 # Minimum angular size for an object to be visible (1m3 object at a distance
 # of about DISTANCE)
@@ -190,14 +191,12 @@ def planet_viewer(star_system ,current_time, positions, planet_name, lat, lon, s
 
     # Loop through constellations in the skybox and calculate their altitude and azimuth
     for constellation_name, constellation in skybox.constellations.items():
-        dx, dy, dz = constellation.coordinates
+        dx, dy, dz = Skybox.sphere_to_cartesian(skybox.radius, constellation.lat, constellation.long)
+
         distance_to_center = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-
         distance = math.sqrt(observer_radius ** 2 + distance_to_center ** 2 - 2 * observer_radius * distance_to_center * math.cos(observer_lat_rad))
-
         declination = math.asin(dz / distance)
         right_ascension = math.atan2(dy, dx)
-
         hour_angle = lst - right_ascension
 
         sin_latitude_tilted = math.sin(observer_lat_rad) * math.cos(axial_tilt_rad) - math.cos(observer_lat_rad) * math.sin(axial_tilt_rad) * math.cos(hour_angle)
@@ -211,5 +210,8 @@ def planet_viewer(star_system ,current_time, positions, planet_name, lat, lon, s
     visible_constellations_np = np.array(visible_constellations, dtype=[('name', 'U20'), ('altitude', float), ('azimuth', float)])
     visible_constellations_np.sort(order='altitude')
     visible_constellations_np = visible_constellations_np[::-1]
+
+    for constellation_info in visible_constellations_np:
+        print(f"{constellation_info['name']}: Altitude: {math.degrees(constellation_info['altitude']):.2f}°, Azimuth: {math.degrees(constellation_info['azimuth']):.2f}°")
 
     return visible_bodies_np, visible_constellations_np
