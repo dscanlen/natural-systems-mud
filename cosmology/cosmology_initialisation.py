@@ -18,7 +18,6 @@ This module is structured as follows:
 """
 
 import math
-# import random
 
 # Constants
 SECONDS_PER_DAY = 86400
@@ -73,28 +72,7 @@ class Skybox:
         self.radius = radius
         self.constellations = constellations if constellations is not None else {}
 
-    @staticmethod
-    def sphere_to_cartesian(radius, lat, long):
-        """
-        Convert spherical coordinates to Cartesian coordinates.
-
-        Parameters:
-        r (float): the radius.
-        lat (float): the latitude in degrees.
-        long (float): the longitude in degrees.
-
-        Returns:
-        tuple: The Cartesian coordinates (x, y, z).
-        """
-        lat_rad = math.radians(lat)
-        long_rad = math.radians(long)
-
-        x_pos = radius * math.cos(lat_rad) * math.cos(long_rad)
-        y_pos = radius * math.cos(lat_rad) * math.sin(long_rad)
-        z_pos = radius * math.sin(lat_rad)
-
-        return x_pos, y_pos, z_pos
-
+    ### Currently removes cartesean coord from lat long for simplicity
 
 class CelestialBody:
     """
@@ -152,6 +130,8 @@ def initialize_star_system():
         the star system.
     """
 
+    ### Reworks this so it still outputs a list but since body type is added we no longer need to define bodies in lists
+
     sun = CelestialBody("Sun", "Big burning ball", "star", 0, 0, 0, 0, 0, None, 696340, 0)
 
     planets = [
@@ -162,21 +142,11 @@ def initialize_star_system():
         CelestialBody("Saturn", "Saturn description", "planet", 10.12, 9.04, 29.46 * SECONDS_PER_YEAR, 0.44401 * SECONDS_PER_DAY, 2.49, sun, 58232, 26.73),
     ]
 
-    # moons = [
-    #     CelestialBody("Moon", "Moon description", "moon", 0.00257, 0.00256, 27 * SECONDS_PER_DAY, 27 * SECONDS_PER_DAY, 5.14, planets[2], 1737, 1.54),
-    #     CelestialBody("Phobos", "Phobos description", "moon", 0.0000066, 0.0000062, 0.31891 * SECONDS_PER_DAY, 0.31891 * SECONDS_PER_DAY, 1.08, planets[3], 11.2667, 0),
-    #     CelestialBody("Deimos", "Deimos description", "moon", 0.0000234, 0.0000222, 1.26244 * SECONDS_PER_DAY, 1.26244 * SECONDS_PER_DAY, 1.79, planets[3], 6.2, 0),
-    #     CelestialBody("Europa", "Europa description", "moon", 0.0045, 0.0045, 3.551 * SECONDS_PER_DAY, 3.551 * SECONDS_PER_DAY, 0.47, planets[2], 1560.8, 0.1),
-    # ]
+    moons = [
+        CelestialBody("Moon", "Moon description", "moon", 0.00257, 0.00256, 27 * SECONDS_PER_DAY, 27 * SECONDS_PER_DAY, 5.14, planets[2], 1737, 1.54),
+    ]
 
-    # comets = [
-    #     CelestialBody("Comet1", "Red comet description", "comet", 0.9, 0.6, 1 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 6, 0),
-    #     CelestialBody("Comet2", "blue comet description", "comet", 5.5, 3.7, 5 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 10, 0),
-    #     CelestialBody("Comet3", "green comet description", "comet", 0.8, 0.4, 0.5 * SECONDS_PER_YEAR, 0, random.uniform(0, 180), sun, 25, 0),
-    # ]
-
-    star_system = [sun] + planets # + moons + comets
-
+    star_system = [sun] + planets + moons
     return {body.name: body for body in star_system}
 
 
@@ -201,6 +171,8 @@ def initialize_skybox(radius):
     """
 
     # Initialize a constellation with the name and list of stars
+    ### This requires fixing - 0, 90 is the 'north' location on the skybox not the relative 'north' point of the viewer
+    ### constellations will always be in relation to the 'home' planet
     constellations = {
         "Polaris": Constellation("Polaris", "A bright star named in the north", 0, 90),
     }
