@@ -104,19 +104,3 @@ def compute_max_apogee(celestial_bodies):
         The maximum apogee value.
     """
     return max(body.apogee for body in celestial_bodies.values())
-
-# def compute_max_apogee(celestial_bodies):
-#     """
-#     Compute the maximum apogee of all celestial bodies.
-
-#     Parameters:
-#     ----------
-#     celestial_bodies (dict): a dictionary of celestial bodies.
-
-#     Returns:
-#     -------
-#     float
-#         The maximum apogee.
-#     """
-#     max_apogee = max(km_to_au(body.orbit_radius) for body in celestial_bodies.values())
-#     return max_apogee
