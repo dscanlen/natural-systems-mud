@@ -13,6 +13,15 @@ plot_visible_bodies(visible_bodies, file_name): Generate a polar plot of the vis
 celestial bodies and save the plot as an image file.
 """
 
+### This whole script needs to be reworked to be clearer
+### TODO:
+### Generate a Skybox map for interest
+###     - Overlay 'viewer position' onto skybox map for context?
+### Rework viewer map of celestial bodies
+###     - Add in lat-long grid lines from skybox to give context
+###     - Use predefined plot sizes, shapes and colours for the Sun, planets and constellations
+###     - Confirm and draw appropriate grid lines for viewer, potentially using N, S, E, W
+
 import matplotlib.pyplot as plt
 import numpy as np
 
