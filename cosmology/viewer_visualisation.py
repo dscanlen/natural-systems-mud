@@ -110,7 +110,11 @@ def update_positions(current_time, star_system):
 
     return positions
 
-
+### This is an absolute beast of a function
+### Further review is required to get a handle of this in full.
+### Break this down into functional parts
+### Remove the visble bodies part and angular_size - this can be handled later with distances etc
+### Might be worth looking into creating a 'visiblility cone' for the viewer and if bodies intersect this code then display?
 
 def planet_viewer(star_system ,current_time, positions, planet_name, lat, lon, skybox):
     """
