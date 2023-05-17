@@ -73,6 +73,27 @@ class Skybox:
         self.constellations = constellations if constellations is not None else {}
 
     ### Currently removes cartesean coord from lat long for simplicity
+    @staticmethod
+    def sphere_to_cartesian(radius, lat, long):
+        """
+        Convert spherical coordinates to Cartesian coordinates.
+
+        Parameters:
+        r (float): the radius.
+        lat (float): the latitude in degrees.
+        long (float): the longitude in degrees.
+
+        Returns:
+        tuple: The Cartesian coordinates (x, y, z).
+        """
+        lat_rad = math.radians(lat)
+        long_rad = math.radians(long)
+
+        x_pos = radius * math.cos(lat_rad) * math.cos(long_rad)
+        y_pos = radius * math.cos(lat_rad) * math.sin(long_rad)
+        z_pos = radius * math.sin(lat_rad)
+
+        return x_pos, y_pos, z_pos
 
 class CelestialBody:
     """
@@ -130,23 +151,26 @@ def initialize_star_system():
         the star system.
     """
 
-    ### Reworks this so it still outputs a list but since body type is added we no longer need to define bodies in lists
-
-    sun = CelestialBody("Sun", "Big burning ball", "star", 0, 0, 0, 0, 0, None, 696340, 0)
+    star = CelestialBody("Sun", "Big burning ball", "star", 0, 0, 0, 0, 0, None, 696340, 0)
 
     planets = [
-        CelestialBody("Mercury", "Mercury description", "planet", 0.47, 0.31, 87.97 * SECONDS_PER_DAY, 58.646 * SECONDS_PER_DAY, 7.00, sun, 2440, 0.034),
-        CelestialBody("Venus", "Venus description", "planet", 0.72, 0.71, 224.70 * SECONDS_PER_DAY, -243.018 * SECONDS_PER_DAY, 3.39, sun, 6052, 2.64),
-        CelestialBody("Earth", "Earth description", "planet", 1.02, 0.98, 365.26 * SECONDS_PER_DAY, 1 * SECONDS_PER_DAY, 0, sun, 6371, 23.44),
-        CelestialBody("Jupiter", "Jupiter description", "planet", 5.46, 4.95, 11.86 * SECONDS_PER_YEAR, 0.41354 * SECONDS_PER_DAY, 1.31, sun, 69911, 3.13),
-        CelestialBody("Saturn", "Saturn description", "planet", 10.12, 9.04, 29.46 * SECONDS_PER_YEAR, 0.44401 * SECONDS_PER_DAY, 2.49, sun, 58232, 26.73),
+        CelestialBody("Mercury", "Mercury description", "planet", 0.47, 0.31, 87.97 * SECONDS_PER_DAY, 58.646 * SECONDS_PER_DAY, 7.00, star, 2440, 0.034),
+        CelestialBody("Venus", "Venus description", "planet", 0.72, 0.71, 224.70 * SECONDS_PER_DAY, -243.018 * SECONDS_PER_DAY, 3.39, star, 6052, 2.64),
+        CelestialBody("Earth", "Earth description", "planet", 1.02, 0.98, 365.26 * SECONDS_PER_DAY, 1 * SECONDS_PER_DAY, 0, star, 6371, 23.44),
+        CelestialBody("Jupiter", "Jupiter description", "planet", 5.46, 4.95, 11.86 * SECONDS_PER_YEAR, 0.41354 * SECONDS_PER_DAY, 1.31, star, 69911, 3.13),
+        CelestialBody("Saturn", "Saturn description", "planet", 10.12, 9.04, 29.46 * SECONDS_PER_YEAR, 0.44401 * SECONDS_PER_DAY, 2.49, star, 58232, 26.73),
     ]
 
     moons = [
         CelestialBody("Moon", "Moon description", "moon", 0.00257, 0.00256, 27 * SECONDS_PER_DAY, 27 * SECONDS_PER_DAY, 5.14, planets[2], 1737, 1.54),
     ]
 
-    star_system = [sun] + planets + moons
+    comets = []
+
+    meteorites = []
+
+    star_system = [star] + planets + moons + comets + meteorites
+
     return {body.name: body for body in star_system}
 
 
@@ -154,8 +178,7 @@ def initialize_skybox(radius):
     """
     Initialize a skybox for the star system.
 
-    This function creates a Skybox object with a specified radius. The stars and constellations
-    are populated with example stars and constellations.
+    This function creates a Skybox object with a specified radius, populated with constellations.
 
     Parameters:
     -----------
@@ -166,8 +189,7 @@ def initialize_skybox(radius):
     Returns:
     --------
     Skybox
-        A Skybox object with the specified radius and populated stars and constellations
-        dictionaries.
+        A Skybox object with the specified radius and populated constellations dictionary.
     """
 
     # Initialize a constellation with the name and list of stars
