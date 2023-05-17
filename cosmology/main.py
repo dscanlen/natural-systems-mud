@@ -37,9 +37,9 @@ def main():
     os.chdir(os.getcwd() + "/cosmology/plot/")
 
     # test run
-    for i in range(1, 400):
+    for i in range(1, 100):
         positions = update_positions(current_time, star_system)
-        visible_bodies, visible_constellations = planet_viewer(star_system, current_time, positions, 'Earth', 40, -74, sky_box)
+        visible_bodies, visible_constellations = planet_viewer(star_system, current_time, positions, 'Earth', 90, 0, sky_box)
         plot_visible_bodies(visible_bodies, visible_constellations, str(filename).zfill(3))  # add leading zeros to filename
         filename += 1
         current_time += 1800
